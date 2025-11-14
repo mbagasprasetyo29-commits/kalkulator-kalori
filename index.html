@@ -5,120 +5,124 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Kalkulator Kalori — Satu Makan</title>
 
-  <!-- Google Font -->
+  <!-- FONT -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-  <!-- STYLE -->
+  <!-- STYLE EKSTERNAL (WAJIB!) -->
   <link rel="stylesheet" href="style.css">
 
-  <!-- EXTERNAL LIBRARIES -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 
 <body>
-<div class="container">
 
-<header>
-  <div class="logo">KM</div>
-  <div>
-    <h1>Kalkulator Kalori — Per Satu Makan</h1>
-    <p class="lead">Analisis porsi — Kalori — Makro — Saran otomatis</p>
-  </div>
-</header>
+<main class="container">
 
-<div class="grid">
-  <div class="card col-12">
-    <h2>Data Pribadi</h2>
-    <div class="two">
-      <div>
-        <label>Nama</label>
-        <input id="nama" type="text">
-      </div>
-      <div>
-        <label>Umur</label>
-        <input id="umur" type="number">
-      </div>
-    </div>
+  <!-- FORM -->
+  <section class="card">
+    <h2>Input Data</h2>
+    <div id="formError" class="error" style="display:none"></div>
 
-    <div class="two">
-      <div>
-        <label>Jenis Kelamin</label>
-        <select id="jenisKelamin">
-          <option value="L">Laki-laki</option>
-          <option value="P">Perempuan</option>
-        </select>
-      </div>
-      <div>
-        <label>Aktivitas</label>
-        <select id="aktivitas">
-          <option value="1.2">Minimal</option>
-          <option value="1.375">Ringan</option>
-          <option value="1.55" selected>Sedang</option>
-          <option value="1.725">Berat</option>
-          <option value="1.9">Sangat Berat</option>
-        </select>
-      </div>
-    </div>
+    <label>Nama</label>
+    <input id="nama" type="text" placeholder="Nama anda">
 
-    <div class="two">
-      <div>
-        <label>Berat Badan (kg)</label>
-        <input id="berat" type="number">
-      </div>
-      <div>
-        <label>Tinggi Badan (cm)</label>
-        <input id="tinggi" type="number">
-      </div>
-    </div>
-  </div>
+    <label>Umur</label>
+    <input id="umur" type="number" placeholder="20">
 
-  <div class="card col-12">
-    <h2>Data Makanan</h2>
+    <label>Jenis Kelamin</label>
+    <select id="jenisKelamin">
+      <option value="L">Laki-laki</option>
+      <option value="P">Perempuan</option>
+    </select>
 
-    <div class="two">
-      <div>
-        <label>Jenis Makan</label>
-        <select id="jenisMakan">
-          <option>Sarapan</option>
-          <option>Makan Siang</option>
-          <option>Makan Malam</option>
-          <option>Snack</option>
-        </select>
-      </div>
-      <div>
-        <label>Nama Makanan</label>
-        <input id="namaMakanan" type="text">
-      </div>
-    </div>
+    <label>Berat Badan (kg)</label>
+    <input id="berat" type="number" placeholder="60">
 
-    <div class="three">
-      <div>
-        <label>Karbohidrat (g)</label>
-        <input id="karbo" type="number">
-      </div>
-      <div>
-        <label>Protein (g)</label>
-        <input id="protein" type="number">
-      </div>
-      <div>
-        <label>Lemak (g)</label>
-        <input id="lemak" type="number">
-      </div>
-    </div>
+    <label>Tinggi Badan (cm)</label>
+    <input id="tinggi" type="number" placeholder="170">
 
-    <div id="formError" class="error"></div>
+    <label>Aktivitas Harian</label>
+    <select id="aktivitas">
+      <option value="1.2">Tidak aktif (banyak duduk)</option>
+      <option value="1.375">Sedikit aktif</option>
+      <option value="1.55">Cukup aktif</option>
+      <option value="1.725">Aktif</option>
+      <option value="1.9">Sangat aktif</option>
+    </select>
 
-    <div class="controls" style="margin-top:10px">
-      <button class="btn" id="hitung">Hitung</button>
-      <button class="btn secondary" id="reset">Reset</button>
-      <button class="btn ghost" id="saveLocal">Simpan</button>
-      <button class="btn ghost" id="clearLocal">Hapus Simpanan</button>
-    </div>
+    <label>Jenis Makan</label>
+    <select id="jenisMakan">
+      <option>Sarapan</option>
+      <option>Makan Siang</option>
+      <option>Makan Malam</option>
+      <option>Snack</option>
+    </select>
 
-    <p id="lastSaved" style="font-size:13px;color:#666;margin-top:6px"></p>
-  </div>
+    <label>Nama Makanan</label>
+    <input id="namaMakanan" type="text" placeholder="Nasi ayam + sayur">
 
-  <div class="card col-12 fade-in">
-    <h2>Hasil</h2>
+    <label>Karbohidrat (gram)</label>
+    <input id="karbo" type="number" placeholder="0">
+
+    <label>Protein (gram)</label>
+    <input id="protein" type="number" placeholder="0">
+
+    <label>Lemak (gram)</label>
+    <input id="lemak" type="number" placeholder="0">
+
+    <button id="hitung" class="btn-primary">Hitung</button>
+    <button id="reset" class="btn-secondary">Reset</button>
+
+    <button id="saveLocal" class="btn-save">Simpan Data</button>
+    <button id="clearLocal" class="btn-danger">Hapus Simpanan</button>
+
+    <div id="lastSaved" class="saved-info"></div>
+  </section>
+
+  <!-- RESULT -->
+  <section class="card result-grid">
+
+    <h2>Hasil Perhitungan</h2>
+
+    <p><strong>Total Kalori:</strong> <span id="kaloriTotal">0</span></p>
+    <p><strong>Persentase Sesi:</strong> <span id="persentaseSesi">0%</span></p>
+
+    <p><strong>BMR:</strong> <span id="bmrVal">0</span></p>
+    <p><strong>TDEE:</strong> <span id="tdeeVal">0</span></p>
+
+    <h3>Makro</h3>
+    <p>Karbo: <span id="karboG">0 g</span> — <span id="karboKcal">0 kcal</span> — <span id="karboPct">0%</span></p>
+    <p>Protein: <span id="proteinG">0 g</span> — <span id="proteinKcal">0 kcal</span> — <span id="proteinPct">0%</span></p>
+    <p>Lemak: <span id="lemakG">0 g</span> — <span id="lemakKcal">0 kcal</span> — <span id="lemakPct">0%</span></p>
+
+    <canvas id="chartMakro" height="200"></canvas>
+
+    <h3>Evaluasi</h3>
+    <span id="statusTag" class="status-tag">-</span>
+    <p id="verdictTitle"></p>
+    <p id="verdictMsg"></p>
+
+    <h3>Saran</h3>
+    <div id="saranBox"></div>
+
+    <h3>Tips</h3>
+    <div id="tipsArea"></div>
+    <button id="tipsBtn" class="btn-tip">Tips lainnya</button>
+
+    <button id="downloadPdf" class="btn-primary">Download PDF</button>
+    <button id="shareWa" class="btn-wa">Bagikan WhatsApp</button>
+
+  </section>
+
+</main>
+
+<!-- LIBRARY -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- SCRIPT EKSTERNAL (WAJIB!) -->
+<script src="script.js" defer></script>
+
+</body>
+</html>
+
