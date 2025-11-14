@@ -1,75 +1,175 @@
-document.getElementById("formKalori").addEventListener("submit", function(e) {
-    e.preventDefault();
+// =========================
+// Utility functions
+// =========================
 
-    const nama = document.getElementById("nama").value;
-    const usia = parseInt(document.getElementById("usia").value);
-    const kelamin = document.getElementById("kelamin").value;
-    const aktivitas = document.getElementById("aktivitas").value;
-
-    const karbo = parseFloat(document.getElementById("karbo").value);
-    const protein = parseFloat(document.getElementById("protein").value);
-    const lemak = parseFloat(document.getElementById("lemak").value);
-
-    // Menghitung kalori makanan
-    const kalori = (karbo * 4) + (protein * 4) + (lemak * 9);
-
-    // Menghitung BMR
-    let BMR;
-    if (kelamin === "pria") {
-        BMR = 88.36 + (13.4 * 60) + (4.8 * 170) - (5.7 * usia);
-    } else {
-        BMR = 447.6 + (9.2 * 55) + (3.1 * 160) - (4.3 * usia);
-    }
-
-    // Faktor aktivitas
-    let faktor;
-    if (aktivitas === "sangat-rendah") faktor = 1.2;
-    if (aktivitas === "rendah") faktor = 1.375;
-    if (aktivitas === "sedang") faktor = 1.55;
-    if (aktivitas === "tinggi") faktor = 1.725;
-    if (aktivitas === "sangat-tinggi") faktor = 1.9;
-
-    const kebutuhanKalori = BMR * faktor;
-
-    // Evaluasi hasil
-    let evaluasi = "";
-    if (kalori < kebutuhanKalori * 0.9) {
-        evaluasi = "Kamu kekurangan kalori.";
-    } else if (kalori > kebutuhanKalori * 1.1) {
-        evaluasi = "Kamu kelebihan kalori.";
-    } else {
-        evaluasi = "Sudah sesuai kebutuhan kalori.";
-    }
-
-    // Tampilkan hasil
-    document.getElementById("hasil").innerHTML = `
-        <h3>Hasil Perhitungan</h3>
-        Halo <b>${nama}</b>! <br><br>
-        Kalori makanan: <b>${kalori.toFixed(1)} kkal</b><br>
-        Kebutuhan harian: <b>${kebutuhanKalori.toFixed(1)} kkal</b><br><br>
-        <b>${evaluasi}</b>
-    `;
-
-    // Grafik
-    buatGrafik(karbo, protein, lemak);
-});
-
-// Grafik pie chart
-function buatGrafik(karbo, protein, lemak) {
-    const ctx = document.getElementById("grafik").getContext("2d");
-
-    if (window.grafikKalori) {
-        window.grafikKalori.destroy();
-    }
-
-    window.grafikKalori = new Chart(ctx, {
-        type: "pie",
-        data: {
-            labels: ["Karbohidrat", "Protein", "Lemak"],
-            datasets: [{
-                data: [karbo, protein, lemak],
-                backgroundColor: ["#2196f3", "#4caf50", "#ffeb3b"]
-            }]
-        }
-    });
+function $(id) {
+  return document.getElementById(id);
 }
+
+function show(el) {
+  el.classList.add("fade-in");
+  el.style.display = "block";
+}
+
+function hide(el) {
+  el.style.display = "none";
+}
+
+
+// =========================
+// Hitung BMR
+// =========================
+
+function hitungBMR(jk, bb, tb, usia) {
+  if (jk === "L") {
+    return 88.362 + (13.397 * bb) + (4.799 * tb) - (5.677 * usia);
+  } else {
+    return 447.593 + (9.247 * bb) + (3.098 * tb) - (4.330 * usia);
+  }
+}
+
+
+// =========================
+// Aktivitas faktor (bahasa Indonesia)
+// =========================
+
+function faktorAktivitas(level) {
+  switch (level) {
+    case "sangat-rendah": return 1.2;
+    case "ringan": return 1.375;
+    case "sedang": return 1.55;
+    case "tinggi": return 1.725;
+    case "sangat-tinggi": return 1.9;
+    default: return 1.2;
+  }
+}
+
+
+// =========================
+// Hitung TDEE
+// =========================
+
+function hitungTDEE(bmr, aktivitas) {
+  return bmr * faktorAktivitas(aktivitas);
+}
+
+
+// =========================
+// Rekomendasi saran makanan
+// =========================
+
+function saranMenu(kurangKalori) {
+  if (kurangKalori < 120) {
+    return [
+      "1 buah pisang",
+      "Roti gandum 1 slice",
+      "Segelas susu rendah lemak"
+    ];
+  } else if (kurangKalori < 300) {
+    return [
+      "Nasi + Telur 1 butir",
+      "Oat 1 mangkuk + buah",
+      "Ayam panggang 80g"
+    ];
+  } else if (kurangKalori < 500) {
+    return [
+      "Nasi + ayam 100g + sayur",
+      "Ikan panggang 100g + kentang",
+      "Tahu tempe + sayur + buah"
+    ];
+  } else {
+    return [
+      "Nasi 1 porsi + lauk lengkap",
+      "Ayam / ikan 150g + sayur",
+      "Snack sehat seperti roti gandum + susu"
+    ];
+  }
+}
+
+
+// =========================
+// Main Calculation
+// =========================
+
+function hitungKalori() {
+
+  // ambil input
+  const nama = $("nama").value.trim();
+  const jk = $("jk").value;
+  const usia = parseInt($("usia").value);
+  const bb = parseFloat($("bb").value);
+  const tb = parseFloat($("tb").value);
+  const aktivitas = $("aktivitas").value;
+  const kaloriSaatIni = parseInt($("kalori-saat-ini").value);
+
+  // validasi
+  if (!nama || !jk || !usia || !bb || !tb || !aktivitas || !kaloriSaatIni) {
+    alert("Harap isi semua data dengan lengkap!");
+    return;
+  }
+
+  // hitung BMR
+  const bmr = hitungBMR(jk, bb, tb, usia);
+
+  // hitung TDEE
+  const tdee = hitungTDEE(bmr, aktivitas);
+
+  // kekurangan kalori
+  const selisih = tdee - kaloriSaatIni;
+
+  // output
+  $("hasil-nama").innerText = nama;
+  $("hasil-bmr").innerText = Math.round(bmr);
+  $("hasil-tdee").innerText = Math.round(tdee);
+
+  if (selisih > 0) {
+    $("status-kalori").innerText = "Kalori kamu hari ini masih kurang";
+    $("angka-selisih").innerText = Math.round(selisih) + " kkal";
+    $("warna-status").style.background = "#F59E0B";
+  } else {
+    $("status-kalori").innerText = "Kalori sudah terpenuhi ✔";
+    $("angka-selisih").innerText = "";
+    $("warna-status").style.background = "#16A34A";
+  }
+
+  // rekomendasi makanan
+  const list = saranMenu(selisih > 0 ? selisih : 0);
+  $("saran-makan").innerHTML = list.map(i => `<li>${i}</li>`).join("");
+
+  // tampilkan card hasil
+  show($("result-card"));
+}
+
+
+// =========================
+// Tombol Reset
+// =========================
+
+function resetForm() {
+  $("result-card").style.display = "none";
+  document.querySelector("form").reset();
+}
+
+
+// =========================
+// Event Listener tombol
+// =========================
+
+document.addEventListener("DOMContentLoaded", () => {
+  const btnHitung = $("btn-hitung");
+  const btnReset = $("btn-reset");
+
+  if (btnHitung) {
+    btnHitung.addEventListener("click", (e) => {
+      e.preventDefault();
+      hitungKalori();
+    });
+  }
+
+  if (btnReset) {
+    btnReset.addEventListener("click", (e) => {
+      e.preventDefault();
+      resetForm();
+    });
+  }
+});
